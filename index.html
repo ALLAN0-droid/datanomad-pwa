@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DataNomad — Offline AI Toolkit</title>
+<meta name="theme-color" content="#1B2430">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+
+  <div class="statusbar">
+    <div class="brand"><span class="dot offline" id="statusDot"></span>DataNomad</div>
+    <div class="status-text" id="statusText">Checking connection…</div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="translate">Translate</button>
+    <button class="tab" data-tab="lessons">Lessons</button>
+    <button class="tab" data-tab="diagnostics">Diagnostics</button>
+  </div>
+
+  <!-- TRANSLATE -->
+  <section class="panel active" id="panel-translate">
+    <h2 class="panel-title">Translate</h2>
+    <p class="panel-sub">Runs a real machine translation model on this device. First load downloads and caches the model (~90MB); every use after that works fully offline.</p>
+
+    <textarea id="srcText" placeholder="Type a sentence in English…">Where is the nearest clinic?</textarea>
+    <div class="row">
+      <button class="btn" id="translateBtn">Translate → Spanish</button>
+      <button class="btn outline" id="loadModelBtn">Load model</button>
+    </div>
+    <div class="model-status" id="modelStatus">Model not loaded yet — tap "Load model" once, while you have a connection.</div>
+    <div class="progress-bar" id="progressBar"><div class="progress-bar-fill" id="progressFill"></div></div>
+    <div class="output-box" id="translateOutput">Translation will appear here.</div>
+  </section>
+
+  <!-- LESSONS -->
+  <section class="panel" id="panel-lessons">
+    <h2 class="panel-title">Lessons</h2>
+    <p class="panel-sub">Offline-cached quiz modules. Results queue locally and sync when a connection is back.</p>
+    <div id="lessonsList"></div>
+  </section>
+
+  <!-- DIAGNOSTICS -->
+  <section class="panel" id="panel-diagnostics">
+    <h2 class="panel-title">Screening check</h2>
+    <p class="panel-sub">A simple, deterministic on-device symptom screener. Not a diagnosis — flags cases for a health worker to review, and queues them for follow-up.</p>
+    <div id="checksList"></div>
+    <button class="btn" id="runCheckBtn" style="margin-top:16px;">Run screening</button>
+    <div id="diagResult"></div>
+  </section>
+
+  <!-- SYNC QUEUE (shared, visible on all tabs) -->
+  <div class="queue-panel" style="padding:0 20px 32px;">
+    <div class="queue-head">
+      <h3>Sync queue</h3>
+      <span class="queue-count-badge" id="queueBadge">0</span>
+    </div>
+    <div id="queueList"><p class="empty-note">Nothing queued yet.</p></div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="settings-panel">
+    <div class="queue-head">
+      <h3>Settings</h3>
+      <span class="sync-endpoint-status" id="syncEndpointStatus">not configured</span>
+    </div>
+    <p class="panel-sub" style="margin-bottom:12px;">
+      Paste the URL of your DataNomad sync backend (see <code>backend/README.md</code>).
+      Records in the queue will POST there for real once you're online.
+    </p>
+    <div class="row" style="margin-top:0;">
+      <input type="text" id="syncEndpointInput" placeholder="https://datanomad-sync.your-subdomain.workers.dev/sync">
+      <button class="btn" id="saveEndpointBtn">Save</button>
+    </div>
+  </div>
+
+  <footer class="note">DataNomad — installable, offline-first. Data stays on this device until it syncs.</footer>
+</div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

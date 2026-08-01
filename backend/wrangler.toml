@@ -1,0 +1,10 @@
+name = "datanomad-sync"
+main = "src/index.js"
+compatibility_date = "2024-11-01"
+
+# Create this with:
+#   wrangler kv namespace create DATANOMAD_KV
+# then paste the returned id below.
+[[kv_namespaces]]
+binding = "DATANOMAD_KV"
+id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"

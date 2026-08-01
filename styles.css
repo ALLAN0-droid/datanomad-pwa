@@ -1,0 +1,125 @@
+:root{
+  --night: #1B2430;
+  --night-deep: #141B24;
+  --paper: #F1ECE0;
+  --sand: #DCD0B4;
+  --ink: #23262B;
+  --ink-soft: #565349;
+  --signal: #E2793D;
+  --signal-dim: #C96A34;
+  --steady: #7C9473;
+  --steady-dim: #67815E;
+  --line: rgba(35,38,43,0.15);
+  --line-dark: rgba(241,236,224,0.14);
+  --display: 'Space Grotesk', sans-serif;
+  --body: 'Source Serif 4', serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+*{ margin:0; padding:0; box-sizing:border-box; }
+body{
+  background:var(--paper); color:var(--ink); font-family:var(--body);
+  -webkit-font-smoothing:antialiased;
+}
+.app{ max-width:720px; margin:0 auto; min-height:100vh; display:flex; flex-direction:column; }
+
+/* ---- Top status bar ---- */
+.statusbar{
+  background:var(--night); color:var(--paper);
+  padding:14px 20px; display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:10;
+}
+.statusbar .brand{ font-family:var(--display); font-weight:700; font-size:16px; display:flex; align-items:center; gap:8px; }
+.dot{ width:8px; height:8px; border-radius:50%; }
+.dot.offline{ background:var(--steady); box-shadow:0 0 0 3px rgba(124,148,115,0.25); }
+.dot.online{ background:var(--signal); box-shadow:0 0 0 3px rgba(226,121,61,0.25); }
+.status-text{ font-family:var(--mono); font-size:11.5px; color:rgba(241,236,224,0.7); display:flex; align-items:center; gap:8px; }
+
+/* ---- Tabs ---- */
+.tabs{ display:flex; border-bottom:1px solid var(--line); background:var(--paper); position:sticky; top:49px; z-index:9; }
+.tab{
+  flex:1; padding:14px 8px; text-align:center; font-family:var(--mono); font-size:11.5px;
+  letter-spacing:0.03em; text-transform:uppercase; color:var(--ink-soft); cursor:pointer;
+  border-bottom:2px solid transparent; background:none; border-top:none; border-left:none; border-right:none;
+}
+.tab.active{ color:var(--night); border-bottom-color:var(--signal); font-weight:600; }
+
+/* ---- Panels ---- */
+.panel{ display:none; padding:24px 20px 40px; flex:1; }
+.panel.active{ display:block; }
+h2.panel-title{ font-family:var(--display); font-size:22px; font-weight:600; color:var(--night); margin-bottom:6px; }
+.panel-sub{ color:var(--ink-soft); font-size:14px; margin-bottom:22px; }
+
+/* ---- Translate ---- */
+textarea, select{
+  width:100%; font-family:var(--body); font-size:15px; padding:12px 14px;
+  border:1px solid var(--line); border-radius:4px; background:#fff; color:var(--ink); resize:vertical;
+}
+textarea{ min-height:90px; }
+.row{ display:flex; gap:10px; margin-top:10px; }
+.btn{
+  font-family:var(--mono); font-size:12.5px; font-weight:500; padding:11px 18px;
+  border-radius:3px; cursor:pointer; border:1px solid var(--night); background:var(--night); color:var(--paper);
+}
+.btn:disabled{ opacity:0.5; cursor:default; }
+.btn.outline{ background:none; color:var(--night); }
+.output-box{
+  margin-top:16px; padding:14px 16px; background:var(--sand); border-radius:4px;
+  font-size:15px; min-height:24px; white-space:pre-wrap;
+}
+.model-status{ margin-top:10px; font-family:var(--mono); font-size:11px; color:var(--ink-soft); }
+.progress-bar{ height:4px; background:var(--line); border-radius:2px; overflow:hidden; margin-top:6px; display:none; }
+.progress-bar-fill{ height:100%; background:var(--signal); width:0%; transition:width .2s; }
+
+/* ---- Lessons ---- */
+.lesson-card{ border:1px solid var(--line); border-radius:5px; padding:16px 18px; margin-bottom:12px; background:#fff; }
+.lesson-card h3{ font-family:var(--display); font-size:16px; margin-bottom:8px; }
+.lesson-card p{ font-size:14px; color:var(--ink-soft); margin-bottom:12px; }
+.opt{
+  display:block; width:100%; text-align:left; padding:9px 12px; margin-bottom:6px;
+  border:1px solid var(--line); border-radius:3px; background:#fff; cursor:pointer; font-family:var(--body); font-size:14px;
+}
+.opt.correct{ border-color:var(--steady); background:rgba(124,148,115,0.12); }
+.opt.wrong{ border-color:var(--signal); background:rgba(226,121,61,0.12); }
+.opt:disabled{ cursor:default; }
+
+/* ---- Diagnostics ---- */
+.check-row{ display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--line); }
+.check-row label{ font-size:14.5px; flex:1; }
+.result-box{ margin-top:18px; padding:16px; border-radius:5px; }
+.result-low{ background:rgba(124,148,115,0.14); }
+.result-high{ background:rgba(226,121,61,0.16); }
+.result-box h4{ font-family:var(--display); font-size:15px; margin-bottom:6px; }
+.result-box p{ font-size:13.5px; color:var(--ink-soft); }
+
+/* ---- Sync queue ---- */
+.queue-panel{ margin-top:28px; border-top:1px solid var(--line); padding-top:20px; }
+.queue-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.queue-head h3{ font-family:var(--display); font-size:14px; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink-soft); }
+.queue-count-badge{ font-family:var(--mono); font-size:12px; background:var(--night); color:var(--paper); padding:3px 9px; border-radius:20px; }
+.queue-item{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:9px 0; border-bottom:1px solid var(--line); font-size:13px;
+}
+.queue-item .type{ font-family:var(--mono); font-size:10.5px; text-transform:uppercase; color:var(--ink-soft); }
+.queue-item .state{ font-family:var(--mono); font-size:10.5px; }
+.queue-item .state.pending{ color:var(--signal-dim); }
+.queue-item .state.synced{ color:var(--steady-dim); }
+.empty-note{ font-size:13px; color:var(--ink-soft); font-style:italic; }
+
+/* ---- Settings ---- */
+.settings-panel{ padding:0 20px 32px; border-top:1px solid var(--line); padding-top:20px; }
+.settings-panel .row{ align-items:stretch; }
+.settings-panel input[type="text"]{
+  flex:1; font-family:var(--mono); font-size:12.5px; padding:11px 12px;
+  border:1px solid var(--line); border-radius:3px; background:#fff; color:var(--ink);
+}
+.sync-endpoint-status{
+  font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:0.04em;
+  color:var(--ink-soft); background:var(--sand); padding:3px 9px; border-radius:20px;
+}
+.sync-endpoint-status.configured{ background:rgba(124,148,115,0.18); color:var(--steady-dim); }
+
+footer.note{
+  padding:20px; text-align:center; font-family:var(--mono); font-size:10.5px; color:var(--ink-soft);
+  border-top:1px solid var(--line);
+}
