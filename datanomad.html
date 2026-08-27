@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DataNomad — Offline-First AI for Remote Communities</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#141F1B;
+    --ink-soft:#1B2823;
+    --line:#2C3B32;
+    --line-soft:#233029;
+    --paper:#EAE3D1;
+    --paper-dim:#DDD3B8;
+    --paper-line:#C9BC9C;
+    --moss:#5B6E52;
+    --moss-deep:#3E4E38;
+    --amber:#E7A23B;
+    --amber-deep:#C97F1E;
+    --amber-glow:#F2C069;
+    --grey-signal:#8B9187;
+    --white:#F6F3EA;
+    --ink-text:#1C2620;
+    --max:1180px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink-text);
+    font-family:'IBM Plex Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--amber); color:var(--ink);}
+  a{color:inherit;}
+  img,svg{display:block; max-width:100%;}
+  .mono{font-family:'IBM Plex Mono', monospace;}
+  .display{font-family:'Big Shoulders Display', sans-serif; font-weight:800; letter-spacing:0.01em;}
+  .wrap{max-width:var(--max); margin:0 auto; padding:0 32px;}
+  @media (max-width:640px){ .wrap{padding:0 20px;} }
+
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:7px; height:7px;
+    background:var(--amber);
+    display:inline-block;
+    border-radius:1px;
+  }
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(234,227,209,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--paper-line);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 0;
+  }
+  .brand{
+    display:flex; align-items:baseline; gap:10px;
+  }
+  .brand .mark{
+    font-family:'Big Shoulders Display', sans-serif;
+    font-weight:900;
+    font-size:26px;
+    letter-spacing:0.02em;
+    color:var(--ink);
+  }
+  .brand .tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.14em;
+    color:var(--moss-deep);
+    border:1px solid var(--moss);
+    padding:2px 6px;
+    border-radius:2px;
+  }
+  nav.links{
+    display:flex; gap:28px; align-items:center;
+    font-size:14px;
+    font-weight:500;
+  }
+  nav.links a{
+    text-decoration:none; color:var(--ink-text);
+    position:relative;
+    padding-bottom:3px;
+  }
+  nav.links a::after{
+    content:""; position:absolute; left:0; bottom:0;
+    width:0%; height:2px; background:var(--amber-deep);
+    transition:width .25s ease;
+  }
+  nav.links a:hover::after{width:100%;}
+  .btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    text-decoration:none;
+    padding:11px 18px;
+    border-radius:2px;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    border:1px solid transparent;
+    cursor:pointer;
+    transition:transform .18s ease, background .18s ease, border-color .18s ease;
+  }
+  .btn-primary{background:var(--amber); color:var(--ink);}
+  .btn-primary:hover{background:var(--amber-glow); transform:translateY(-1px);}
+  .btn-ghost{border-color:var(--ink); color:var(--ink);}
+  .btn-ghost:hover{background:var(--ink); color:var(--paper);}
+  .nav-cta{display:none;}
+  @media (min-width:900px){ .nav-cta{display:inline-flex;} }
+  .menu-btn{display:none; background:none; border:1px solid var(--ink); border-radius:2px; padding:8px 10px;}
+  @media (max-width:899px){
+    nav.links{display:none;}
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    background:var(--ink);
+    color:var(--paper);
+    position:relative;
+    overflow:hidden;
+    padding:88px 0 0;
+  }
+  .hero .wrap{
+    display:grid;
+    grid-template-columns:1.05fr 0.95fr;
+    gap:48px;
+    align-items:center;
+    position:relative;
+    z-index:2;
+  }
+  @media (max-width:940px){
+    .hero .wrap{grid-template-columns:1fr; padding-bottom:20px;}
+  }
+  .hero-eyebrow{color:var(--amber-glow); margin-bottom:22px;}
+  .hero h1{
+    font-size:clamp(40px, 5.6vw, 74px);
+    line-height:0.98;
+    margin:0 0 26px;
+    color:var(--white);
+  }
+  .hero h1 em{
+    font-style:normal;
+    color:var(--amber);
+  }
+  .hero p.lede{
+    font-size:17px;
+    line-height:1.65;
+    color:var(--grey-signal);
+    max-width:46ch;
+    margin:0 0 34px;
+  }
+  .hero .cta-row{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:56px;}
+  .hero .btn-ghost{border-color:var(--paper-dim); color:var(--paper);}
+  .hero .btn-ghost:hover{background:var(--paper); color:var(--ink);}
+
+  /* signature visual */
+  .signal-panel{
+    position:relative;
+    border:1px solid var(--line);
+    background:var(--ink-soft);
+    border-radius:3px;
+    aspect-ratio:1/1;
+    overflow:hidden;
+  }
+  .signal-panel svg{width:100%; height:100%; display:block;}
+  .contour{fill:none; stroke:var(--line); stroke-width:1;}
+  .contour.c2{stroke:var(--line-soft);}
+  .node-core{fill:var(--amber); }
+  .node{fill:var(--paper);}
+  .node-ring{fill:none; stroke:var(--amber); stroke-width:1.4; opacity:0;}
+  .link{fill:none; stroke:var(--moss); stroke-width:1; stroke-dasharray:3 4; opacity:.7;}
+  .pulse-dot{fill:var(--amber-glow);}
+
+  @keyframes drift{
+    from{ transform:translateX(0);}
+    to{ transform:translateX(-40px);}
+  }
+  .contour-group{animation:drift 26s linear infinite alternate;}
+
+  @keyframes ringPulse{
+    0%{ r:6; opacity:.9; }
+    100%{ r:22; opacity:0; }
+  }
+  .node-ring{animation:ringPulse 3.2s ease-out infinite;}
+
+  .status-bar{
+    position:absolute; left:14px; bottom:14px; right:14px;
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.08em;
+    color:var(--grey-signal);
+    text-transform:uppercase;
+  }
+  .status-bar #statusText{color:var(--amber-glow);}
+  .status-bar .cursor{
+    display:inline-block; width:6px; height:11px; background:var(--amber-glow);
+    margin-left:4px; animation:blink 1s step-start infinite; vertical-align:-2px;
+  }
+  @keyframes blink{50%{opacity:0;}}
+
+  .strip{
+    background:var(--ink-soft);
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    padding:22px 0;
+  }
+  .strip .wrap{
+    display:flex; gap:14px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+  }
+  .strip p{
+    margin:0; color:var(--grey-signal); font-size:14.5px; max-width:60ch;
+  }
+  .strip .chips{display:flex; gap:10px; flex-wrap:wrap;}
+  .chip{
+    font-family:'IBM Plex Mono', monospace; font-size:11.5px;
+    color:var(--paper); border:1px solid var(--line); padding:6px 10px; border-radius:2px;
+    white-space:nowrap;
+  }
+
+  /* ---------- SECTION GENERIC ---------- */
+  section{padding:96px 0;}
+  @media (max-width:640px){ section{padding:64px 0;} }
+  .section-head{max-width:640px; margin-bottom:56px;}
+  .section-head .eyebrow{color:var(--amber-deep); margin-bottom:14px;}
+  .section-head h2{
+    font-size:clamp(30px,4vw,44px);
+    margin:0 0 16px;
+    line-height:1.05;
+    color:var(--ink);
+  }
+  .section-head p{font-size:16px; line-height:1.6; color:#4B5148; margin:0;}
+
+  /* how it works */
+  .pillars{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
+    background:var(--paper-line);
+    border:1px solid var(--paper-line);
+  }
+  @media (max-width:820px){ .pillars{grid-template-columns:1fr;} }
+  .pillar{
+    background:var(--paper); padding:36px 30px;
+  }
+  .pillar .eyebrow{color:var(--moss-deep); margin-bottom:20px;}
+  .pillar h3{
+    font-family:'Big Shoulders Display', sans-serif;
+    font-weight:800; font-size:26px; margin:0 0 12px; color:var(--ink);
+  }
+  .pillar p{font-size:14.5px; line-height:1.6; color:#4B5148; margin:0;}
+
+  /* modules */
+  .modules-section{background:var(--ink); color:var(--paper);}
+  .modules-section .section-head p{color:var(--grey-signal);}
+  .modules-section .section-head .eyebrow{color:var(--amber-glow);}
+  .modules-section .section-head h2{color:var(--white);}
+  .modules{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:16px;
+  }
+  @media (max-width:980px){ .modules{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:560px){ .modules{grid-template-columns:1fr;} }
+  .module{
+    background:var(--ink-soft);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:26px 22px 24px;
+    transition:border-color .2s ease, transform .2s ease;
+  }
+  .module:hover{border-color:var(--amber-deep); transform:translateY(-3px);}
+  .module .tagline{
+    font-family:'IBM Plex Mono', monospace; font-size:10.5px; letter-spacing:0.1em;
+    color:var(--moss); text-transform:uppercase; margin-bottom:18px; display:block;
+  }
+  .module .icon{width:34px; height:34px; margin-bottom:18px;}
+  .module .icon svg{stroke:var(--amber); fill:none; stroke-width:1.6;}
+  .module h3{
+    font-family:'Big Shoulders Display', sans-serif; font-weight:800;
+    font-size:24px; margin:0 0 10px; color:var(--white); letter-spacing:0.02em;
+  }
+  .module p{font-size:13.8px; line-height:1.55; color:var(--grey-signal); margin:0;}
+
+  /* use cases */
+  .cases{display:flex; flex-direction:column; border-top:1px solid var(--paper-line);}
+  .case{
+    display:grid; grid-template-columns:220px 1fr;
+    gap:32px;
+    padding:34px 0;
+    border-bottom:1px solid var(--paper-line);
+  }
+  @media (max-width:700px){ .case{grid-template-columns:1fr; gap:12px;} }
+  .case .tab{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--amber-deep);
+    display:flex; align-items:flex-start; gap:8px;
+  }
+  .case .tab .n{color:var(--moss-deep);}
+  .case h3{
+    font-family:'Big Shoulders Display', sans-serif; font-weight:800;
+    font-size:26px; margin:0 0 10px; color:var(--ink);
+  }
+  .case p{margin:0; color:#4B5148; font-size:15px; line-height:1.65; max-width:64ch;}
+
+  /* sync flow */
+  .flow-wrap{
+    background:var(--paper-dim);
+    border:1px solid var(--paper-line);
+    border-radius:3px;
+    padding:44px 34px;
+    overflow-x:auto;
+  }
+  .flow{
+    display:flex; align-items:center; gap:0; min-width:720px;
+  }
+  .flow-step{
+    display:flex; flex-direction:column; align-items:center; text-align:center; width:150px;
+  }
+  .flow-step .dot{
+    width:52px; height:52px; border-radius:50%;
+    background:var(--ink); border:2px solid var(--moss);
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:14px;
+  }
+  .flow-step.active .dot{border-color:var(--amber);}
+  .flow-step .dot svg{width:22px; height:22px; stroke:var(--amber-glow); fill:none; stroke-width:1.6;}
+  .flow-step .label{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.08em;
+    text-transform:uppercase; color:var(--ink); font-weight:600; margin-bottom:6px;
+  }
+  .flow-step .desc{font-size:12.5px; color:#5C6156; line-height:1.4;}
+  .flow-line{
+    flex:1; height:2px; background:repeating-linear-gradient(90deg, var(--moss) 0 6px, transparent 6px 12px);
+    margin:0 -2px 46px;
+    position:relative;
+  }
+  .flow-line .travel{
+    position:absolute; top:-3px; width:8px; height:8px; border-radius:50%;
+    background:var(--amber); animation:travel 3.5s linear infinite;
+  }
+  @keyframes travel{
+    0%{left:0%; opacity:0;}
+    8%{opacity:1;}
+    92%{opacity:1;}
+    100%{left:100%; opacity:0;}
+  }
+
+  /* kits / pricing */
+  .kits{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  @media (max-width:900px){ .kits{grid-template-columns:1fr;} }
+  .kit{
+    border:1px solid var(--paper-line);
+    background:var(--paper);
+    padding:32px 26px;
+    border-radius:3px;
+    display:flex; flex-direction:column;
+    transition:border-color .2s ease, box-shadow .2s ease;
+  }
+  .kit.featured{
+    border-color:var(--amber-deep);
+    box-shadow:0 0 0 1px var(--amber-deep);
+    background:var(--white);
+  }
+  .kit .kit-tag{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.1em;
+    color:var(--moss-deep); text-transform:uppercase; margin-bottom:16px;
+  }
+  .kit h3{
+    font-family:'Big Shoulders Display', sans-serif; font-weight:800; font-size:28px;
+    margin:0 0 14px; color:var(--ink);
+  }
+  .kit p.blurb{font-size:14px; color:#4B5148; line-height:1.55; margin:0 0 22px;}
+  .kit ul{list-style:none; margin:0 0 28px; padding:0; flex:1;}
+  .kit li{
+    font-size:13.5px; padding:9px 0; border-top:1px solid var(--paper-line);
+    display:flex; gap:10px; color:var(--ink-text);
+  }
+  .kit li:first-child{border-top:none;}
+  .kit li::before{content:"—"; color:var(--amber-deep); flex-shrink:0;}
+  .kit .btn{align-self:flex-start;}
+
+  /* footer / contact */
+  footer{background:var(--ink); color:var(--paper); padding:80px 0 34px;}
+  .footer-top{
+    display:grid; grid-template-columns:1.2fr 1fr; gap:48px;
+    padding-bottom:64px; border-bottom:1px solid var(--line);
+    margin-bottom:34px;
+  }
+  @media (max-width:820px){ .footer-top{grid-template-columns:1fr;} }
+  .footer-top h2{
+    font-size:clamp(28px,4vw,42px); color:var(--white); margin:0 0 18px; line-height:1.08;
+  }
+  .footer-top p{color:var(--grey-signal); font-size:15px; max-width:48ch; margin:0 0 28px; line-height:1.6;}
+  .bars{display:flex; align-items:flex-end; gap:5px; height:40px; margin-bottom:24px;}
+  .bars span{
+    width:6px; background:var(--moss); display:inline-block; border-radius:1px;
+    animation:barpulse 1.6s ease-in-out infinite;
+  }
+  .bars span:nth-child(1){height:30%; animation-delay:0s;}
+  .bars span:nth-child(2){height:55%; animation-delay:.15s;}
+  .bars span:nth-child(3){height:80%; animation-delay:.3s; background:var(--amber);}
+  .bars span:nth-child(4){height:100%; animation-delay:.45s; background:var(--amber);}
+  .bars span:nth-child(5){height:65%; animation-delay:.6s;}
+  @keyframes barpulse{
+    0%,100%{opacity:.5; transform:scaleY(.85);}
+    50%{opacity:1; transform:scaleY(1);}
+  }
+  .foot-form{
+    display:flex; flex-direction:column; gap:12px;
+  }
+  .foot-form input, .foot-form select, .foot-form textarea{
+    background:var(--ink-soft); border:1px solid var(--line); color:var(--paper);
+    padding:13px 14px; font-family:'IBM Plex Sans'; font-size:14px; border-radius:2px;
+    width:100%;
+  }
+  .foot-form label{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.08em;
+    text-transform:uppercase; color:var(--grey-signal); margin-bottom:4px; display:block;
+  }
+  .foot-form .field{display:flex; flex-direction:column;}
+  .foot-form button{margin-top:6px; align-self:flex-start;}
+  .form-note{font-size:12px; color:var(--grey-signal); margin-top:2px;}
+
+  .foot-bottom{
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;
+    font-family:'IBM Plex Mono', monospace; font-size:11.5px; color:var(--grey-signal);
+    letter-spacing:0.04em;
+  }
+  .foot-bottom .flinks{display:flex; gap:20px;}
+  .foot-bottom a{text-decoration:none; color:var(--grey-signal);}
+  .foot-bottom a:hover{color:var(--amber-glow);}
+
+  .reveal{opacity:0; transform:translateY(18px); transition:opacity .7s ease, transform .7s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <div class="brand">
+      <span class="mark">DATANOMAD</span>
+      <span class="tag mono">FIELD KIT</span>
+    </div>
+    <nav class="links">
+      <a href="#how">How it works</a>
+      <a href="#toolkit">Toolkit</a>
+      <a href="#cases">Use cases</a>
+      <a href="#kits">Kits</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a href="#contact" class="btn btn-primary nav-cta">Request a demo</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow hero-eyebrow">Offline-first AI · Deployed at the edge</div>
+      <h1 class="display">Intelligence that doesn't wait<br>for a <em>signal.</em></h1>
+      <p class="lede">DataNomad packs translation, education, and diagnostic AI directly onto the device — so classrooms, clinics, and field teams keep working through the dead zones, and everything reconciles the moment a connection returns.</p>
+      <div class="cta-row">
+        <a href="#toolkit" class="btn btn-primary">See the toolkit</a>
+        <a href="#contact" class="btn btn-ghost">Talk to us</a>
+      </div>
+    </div>
+
+    <div class="signal-panel" id="signalPanel">
+      <svg viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice">
+        <g class="contour-group">
+          <path class="contour" d="M-20,60 C60,20 140,90 220,55 C300,20 360,70 430,40" />
+          <path class="contour" d="M-20,120 C70,80 150,150 230,110 C310,70 370,130 430,95" />
+          <path class="contour c2" d="M-20,180 C80,150 160,210 240,170 C320,130 380,190 430,160" />
+          <path class="contour" d="M-20,250 C70,300 150,230 230,270 C310,310 370,250 430,290" />
+          <path class="contour c2" d="M-20,310 C80,350 160,300 240,330 C320,360 380,310 430,340" />
+        </g>
+
+        <!-- links from nodes to hub -->
+        <path class="link" d="M95,120 L200,200" />
+        <path class="link" d="M320,95 L200,200" />
+        <path class="link" d="M70,290 L200,200" />
+        <path class="link" d="M310,300 L200,200" />
+
+        <!-- traveling sync dots -->
+        <circle class="pulse-dot" r="3">
+          <animateMotion dur="3.6s" repeatCount="indefinite" path="M95,120 L200,200" />
+        </circle>
+        <circle class="pulse-dot" r="3">
+          <animateMotion dur="4.2s" begin="1s" repeatCount="indefinite" path="M320,95 L200,200" />
+        </circle>
+        <circle class="pulse-dot" r="3">
+          <animateMotion dur="3.9s" begin="2s" repeatCount="indefinite" path="M70,290 L200,200" />
+        </circle>
+        <circle class="pulse-dot" r="3">
+          <animateMotion dur="4.6s" begin="0.5s" repeatCount="indefinite" path="M310,300 L200,200" />
+        </circle>
+
+        <!-- outer nodes -->
+        <g>
+          <circle class="node" cx="95" cy="120" r="5" />
+          <circle class="node-ring" cx="95" cy="120" style="animation-delay:0s" />
+        </g>
+        <g>
+          <circle class="node" cx="320" cy="95" r="5" />
+          <circle class="node-ring" cx="320" cy="95" style="animation-delay:.8s" />
+        </g>
+        <g>
+          <circle class="node" cx="70" cy="290" r="5" />
+          <circle class="node-ring" cx="70" cy="290" style="animation-delay:1.6s" />
+        </g>
+        <g>
+          <circle class="node" cx="310" cy="300" r="5" />
+          <circle class="node-ring" cx="310" cy="300" style="animation-delay:2.4s" />
+        </g>
+
+        <!-- hub -->
+        <circle class="node-core" cx="200" cy="200" r="8" />
+        <circle class="node-ring" cx="200" cy="200" style="animation-delay:0s; stroke:var(--amber-glow);" />
+      </svg>
+      <div class="status-bar mono">
+        <span>DEVICE 04 // OFFLINE CACHE</span>
+        <span id="statusText">SIGNAL: NONE<span class="cursor"></span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="strip">
+  <div class="wrap">
+    <p>Over a third of the world still can't count on a steady connection — and most AI tools assume one anyway. DataNomad is built for the gap.</p>
+    <div class="chips">
+      <span class="chip mono">RUNS ON-DEVICE</span>
+      <span class="chip mono">SYNCS WHEN FOUND</span>
+      <span class="chip mono">NO SERVER REQUIRED</span>
+    </div>
+  </div>
+</div>
+
+<section id="how">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">How it works</div>
+      <h2 class="display">Three pieces, one device, zero dependency on a tower.</h2>
+      <p>DataNomad isn't a thinner version of a cloud product. It's built ground-up to be complete without a network, and to get smarter the moment one shows up.</p>
+    </div>
+    <div class="pillars">
+      <div class="pillar reveal">
+        <div class="eyebrow">Edge AI</div>
+        <h3 class="display">Models that live on the device</h3>
+        <p>Compact, quantized LLMs and ML models run directly in the browser or on-device — no round trip to a data center for every request.</p>
+      </div>
+      <div class="pillar reveal">
+        <div class="eyebrow">PWA core</div>
+        <h3 class="display">An app that never shows a blank screen</h3>
+        <p>A service-worker-cached shell loads instantly whether there's coverage or not, so the interface is never the thing that fails.</p>
+      </div>
+      <div class="pillar reveal">
+        <div class="eyebrow">Deferred sync</div>
+        <h3 class="display">Work queues, then reconciles</h3>
+        <p>Every form, lesson, and record is saved locally first. When a connection appears, it reconciles quietly in the background.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="modules-section" id="toolkit">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">The toolkit</div>
+      <h2 class="display">Four modules. Load the ones you need.</h2>
+      <p>DataNomad ships as a modular kit — deploy one module or all four, depending on what the field actually calls for.</p>
+    </div>
+    <div class="modules">
+      <div class="module reveal">
+        <span class="tagline">Module // Translate</span>
+        <div class="icon"><svg viewBox="0 0 24 24"><path d="M4 5h9M8 3v2m3.5 0c-1 4-3 7-6.5 9M6 9c1 2.5 3 4 5.5 5M13 20l4-9 4 9M14.5 17h5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3 class="display">Translate</h3>
+        <p>Offline speech and text translation across dozens of languages, tuned for regional dialects that generic models miss.</p>
+      </div>
+      <div class="module reveal">
+        <span class="tagline">Module // Educate</span>
+        <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 4 2 9l10 5 10-5-10-5Z M6 12v5c0 1.5 3 3 6 3s6-1.5 6-3v-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3 class="display">Educate</h3>
+        <p>Adaptive lessons, quizzes, and reading assistants that run a full classroom session without a single byte of wifi.</p>
+      </div>
+      <div class="module reveal">
+        <span class="tagline">Module // Diagnose</span>
+        <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 3v6M9 6h6M6 12c0 5 3 9 6 9s6-4 6-9a3 3 0 0 0-3-3h-6a3 3 0 0 0-3 3Z" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3 class="display">Diagnose</h3>
+        <p>Symptom triage and basic diagnostic support that gives community health workers a second opinion in the room.</p>
+      </div>
+      <div class="module reveal">
+        <span class="tagline">Module // Record</span>
+        <div class="icon"><svg viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6z M9 9h6M9 13h6M9 17h4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3 class="display">Record</h3>
+        <p>Structured offline data entry for surveys, census work, and conservation logging — validated locally before it syncs.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="cases">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Where it's used</div>
+      <h2 class="display">Three fields. One kit, configured differently each time.</h2>
+      <p>Every deployment starts from the same core and gets shaped by whoever's on the ground.</p>
+    </div>
+    <div class="cases">
+      <div class="case reveal">
+        <div class="tab"><span>Case file</span><span class="n">— Education</span></div>
+        <div>
+          <h3 class="display">Rural education</h3>
+          <p>A single tablet per classroom holds a full term of adaptive lessons and quizzes. Teachers track progress locally; the moment the school's monthly market-day connection appears, results sync to the district office automatically.</p>
+        </div>
+      </div>
+      <div class="case reveal">
+        <div class="tab"><span>Case file</span><span class="n">— Conservation</span></div>
+        <div>
+          <h3 class="display">Conservation fieldwork</h3>
+          <p>Rangers log species sightings, GPS tracks, and photos through the Record module deep in reserves with no coverage at all. Weeks of logs upload in one pass the next time a team reaches base camp.</p>
+        </div>
+      </div>
+      <div class="case reveal">
+        <div class="tab"><span>Case file</span><span class="n">— Healthcare</span></div>
+        <div>
+          <h3 class="display">Healthcare fieldwork</h3>
+          <p>Community health workers run the Diagnose and Translate modules together during home visits, working across languages and flagging cases that need referral — all before a clinic ever sees a signal bar.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Sync, explained</div>
+      <h2 class="display">Nothing waits on a network to be useful.</h2>
+      <p>Data moves through the same four steps whether that takes ten seconds or ten days.</p>
+    </div>
+    <div class="flow-wrap reveal">
+      <div class="flow">
+        <div class="flow-step active">
+          <div class="dot"><svg viewBox="0 0 24 24"><path d="M4 4h16v12H4zM8 20h8M12 16v4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="label">Local device</div>
+          <div class="desc">Working fully offline, no connection required</div>
+        </div>
+        <div class="flow-line"><span class="travel"></span></div>
+        <div class="flow-step">
+          <div class="dot"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h16" stroke-linecap="round"/></svg></div>
+          <div class="label">Queued</div>
+          <div class="desc">Records and lessons stack up locally, timestamped</div>
+        </div>
+        <div class="flow-line"><span class="travel" style="animation-delay:1.2s"></span></div>
+        <div class="flow-step">
+          <div class="dot"><svg viewBox="0 0 24 24"><path d="M4 12c0-2 2-4 5-4M20 12c0 2-2 4-5 4M12 3v4M12 17v4" stroke-linecap="round"/></svg></div>
+          <div class="label">Signal found</div>
+          <div class="desc">Any connection triggers a background sync</div>
+        </div>
+        <div class="flow-line"><span class="travel" style="animation-delay:2.4s"></span></div>
+        <div class="flow-step">
+          <div class="dot"><svg viewBox="0 0 24 24"><path d="M12 3v12M8 11l4 4 4-4M5 21h14" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="label">Reconciled</div>
+          <div class="desc">Dashboard updates for the whole organization</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="kits">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Deployment kits</div>
+      <h2 class="display">Built to be bought by the people who deploy it.</h2>
+      <p>Kits scale with the size of the deployment — one classroom or an entire region — not with API calls.</p>
+    </div>
+    <div class="kits">
+      <div class="kit reveal">
+        <div class="kit-tag mono">Starter kit</div>
+        <h3 class="display">Single site</h3>
+        <p class="blurb">For one school, clinic, or field team getting started with a single module.</p>
+        <ul>
+          <li>One module of your choice</li>
+          <li>Up to 10 devices</li>
+          <li>Community support channel</li>
+          <li>Manual sync</li>
+        </ul>
+        <a href="#contact" class="btn btn-ghost" style="border-color:var(--ink); color:var(--ink);">Get started</a>
+      </div>
+      <div class="kit featured reveal">
+        <div class="kit-tag mono">Field kit</div>
+        <h3 class="display">Multi-site</h3>
+        <p class="blurb">For NGOs and networks running several sites across a region.</p>
+        <ul>
+          <li>Full four-module toolkit</li>
+          <li>Unlimited devices per site</li>
+          <li>Automatic sync + offline maps</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="#contact" class="btn btn-primary">Request pricing</a>
+      </div>
+      <div class="kit reveal">
+        <div class="kit-tag mono">Regional kit</div>
+        <h3 class="display">Government scale</h3>
+        <p class="blurb">For ministries and large programs deploying at province or country level.</p>
+        <ul>
+          <li>Custom modules on request</li>
+          <li>Central reporting dashboard</li>
+          <li>On-site training included</li>
+          <li>Dedicated deployment lead</li>
+        </ul>
+        <a href="#contact" class="btn btn-ghost" style="border-color:var(--ink); color:var(--ink);">Talk to sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="wrap">
+    <div class="footer-top">
+      <div>
+        <div class="bars" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+        <h2 class="display">Bring AI to the places connectivity forgot.</h2>
+        <p>Tell us about your deployment — number of sites, which modules you need, and how your teams get online. We'll follow up with a kit recommendation.</p>
+        <div class="eyebrow" style="color:var(--amber-glow);">hello@datanomad.io</div>
+      </div>
+      <form class="foot-form" onsubmit="event.preventDefault(); this.querySelector('button').textContent='Request sent';">
+        <div class="field">
+          <label for="org">Organization</label>
+          <input id="org" type="text" placeholder="e.g. Highland Schools Trust" required>
+        </div>
+        <div class="field">
+          <label for="use">Primary use case</label>
+          <select id="use">
+            <option>Rural education</option>
+            <option>Conservation fieldwork</option>
+            <option>Healthcare fieldwork</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" type="email" placeholder="you@organization.org" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Request a demo</button>
+        <div class="form-note">We reply within two business days, connection permitting.</div>
+      </form>
+    </div>
+    <div class="foot-bottom">
+      <span>DATANOMAD © 2026 — MODULAR OFFLINE AI TOOLKIT</span>
+      <div class="flinks">
+        <a href="#toolkit">Toolkit</a>
+        <a href="#cases">Use cases</a>
+        <a href="#kits">Kits</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // status readout cycle
+  const statuses = ["SIGNAL: NONE", "SIGNAL: WEAK", "SYNCING...", "SYNCED"];
+  let si = 0;
+  const statusEl = document.getElementById('statusText');
+  setInterval(() => {
+    si = (si + 1) % statuses.length;
+    statusEl.innerHTML = statuses[si] + '<span class="cursor"></span>';
+  }, 2200);
+
+  // scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
